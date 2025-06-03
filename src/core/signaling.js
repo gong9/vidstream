@@ -1,4 +1,5 @@
 import * as Logger from "./logger.js";
+import { config } from "../streaming-video.js";
 
 export class Signaling extends EventTarget {
 
@@ -142,7 +143,7 @@ export class WebSocketSignaling extends EventTarget {
     if (location.protocol === "https:") {
       websocketUrl = "wss://" + location.host;
     } else {
-      websocketUrl = "ws://localhost:80/";
+      websocketUrl = config.wsUrl;
     }
 
     this.websocket = new WebSocket(websocketUrl);

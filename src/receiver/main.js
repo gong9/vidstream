@@ -1,8 +1,8 @@
-import { getServerConfig, getRTCConfiguration } from "../../core/config.js";
-import { createDisplayStringArray } from "../../core/stats.js";
-import { VideoPlayer } from "../../core/videoplayer.js";
-import { RenderStreaming } from "../../core/renderstreaming.js";
-import { Signaling, WebSocketSignaling } from "../../core/signaling.js";
+import { getServerConfig, getRTCConfiguration } from "../core/config.js";
+import { createDisplayStringArray } from "../core/stats.js";
+import { VideoPlayer } from "../core/videoplayer.js";
+import { RenderStreaming } from "../core/renderstreaming.js";
+import { Signaling, WebSocketSignaling } from "../core/signaling.js";
 
 /** @type {Element} */
 let playButton;
@@ -20,9 +20,6 @@ export const start = (renderRoot) => {
 
 
   const messageDiv = renderRoot.querySelector("#message");
-
-  console.log(messageDiv);
-
   messageDiv.style.display = "none";
 
   const playerDiv = renderRoot.querySelector("#player");

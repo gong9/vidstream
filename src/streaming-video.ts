@@ -1,61 +1,25 @@
-import { html, css, LitElement } from "lit";
+import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
+import { start } from "./receiver/main";
+import { styles } from "./streaming-video.styles";
 
-// @ts-ignore
-import { start } from "./receiver/js/main";
+export const config = {
+  wsUrl: "ws://localhost:8080"
+}
 
 @customElement("streaming-video")
 export class StreamingVideo extends LitElement {
-  static styles = css`
-    #player {
-      position: relative;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      align-items: center;
-      justify-content: center;
-      display: flex;
-      background-color: #323232;
-    }
-
-    #player:before {
-      content: "";
-      display: block;
-      padding-top: 66%;
-    }
-
-    #playButton {
-      width: 15%;
-      max-width: 200px;
-      cursor: pointer;
-    }
-
-    #Video {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    #fullscreenButton {
-      position: absolute;
-      top: 25px;
-      right: 25px;
-      width: 32px;
-      height: 32px;
-    }
-  `;
+  static styles = styles;
 
   @property()
-  name!: string;
+  public url: string = '';
 
-  firstUpdated() {
+  public firstUpdated() {
+    config.wsUrl = this.url;
     start(this.renderRoot);
   }
 
-  render() {
+  public render() {
     return html`
       <div id="container">
         <div id="warning" hidden="true"></div>
