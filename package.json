@@ -1,5 +1,5 @@
 {
-  "name": "streaming-video",
+  "name": "streaming-video-component",
   "version": "0.0.1",
   "description": "Streaming video component",
   "main": "dist/streaming-video.umd.js",
