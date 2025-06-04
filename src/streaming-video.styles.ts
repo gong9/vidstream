@@ -1,43 +1,19 @@
 import { css } from 'lit'
 
 export const styles = css`
-  #player {
+  #container {
     position: relative;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    align-items: center;
-    justify-content: center;
-    display: flex;
-    background-color: #323232;
   }
 
-  #player:before {
-    content: "";
-    display: block;
-    padding-top: 66%;
-  }
-
-  #playButton {
-    width: 15%;
-    max-width: 200px;
-    cursor: pointer;
-  }
-
-  #Video {
-    position: absolute;
-    top: 0;
-    left: 0;
+  #player {
     width: 100%;
     height: 100%;
   }
 
-  #fullscreenButton {
+  #message {
     position: absolute;
-    top: 25px;
-    right: 25px;
-    width: 32px;
-    height: 32px;
+    top: 75px;
+    left: 25px;
+    color: green;
   }
 `

@@ -1,9 +1,13 @@
 {
-  "name": "vite-lit-ts",
-  "version": "0.0.0",
+  "name": "streaming-video",
+  "version": "0.0.1",
+  "description": "Streaming video component",
+  "main": "dist/streaming-video.umd.js",
+  "module": "dist/streaming-video.es.js",
+  "types": "dist/streaming-video.d.ts",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "vite --config vite.config.development.ts",
+    "build": "vite build --config vite.config.ts",
     "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
@@ -15,6 +19,7 @@
     "@antfu/eslint-config": "^0.38.5",
     "eslint": "^8.23.0",
     "typescript": "^5.7.2",
-    "vite": "^6.0.3"
+    "vite": "^6.0.3",
+    "vite-plugin-dts": "^4.5.4"
   }
 }

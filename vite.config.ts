@@ -1,13 +1,18 @@
 import { defineConfig } from 'vite'
+import dts from 'vite-plugin-dts'
 
 export default defineConfig({
-  server: {
-    proxy: {
-      '/config': {
-        target: 'http://localhost:80',
-        changeOrigin: true,
-        rewrite: path => path.replace(/^\/api/, ''),
-      },
+  plugins: [
+    dts(),
+  ],
+  build: {
+    lib: {
+      entry: ['src/streaming-video.ts'],
+      fileName: (format, entryName) => `streaming-video-${entryName}.${format}.js`,
+      name: 'streamingVideo',
+      formats: ['es', 'umd'],
     },
+    outDir: 'dist',
+    sourcemap: true,
   },
 })

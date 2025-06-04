@@ -4,24 +4,20 @@ import { VideoPlayer } from '../core/videoplayer.js'
 import { RenderStreaming } from '../core/renderstreaming.js'
 import { Signaling, WebSocketSignaling } from '../core/signaling.js'
 
-/** @type {Element} */
-let playButton
 /** @type {RenderStreaming} */
 let renderstreaming
 /** @type {boolean} */
 let useWebSocket
 
 export function start(renderRoot) {
-  const codecPreferences = renderRoot.querySelector('#codecPreferences')
   const supportsSetCodecPreferences
     = window.RTCRtpTransceiver
     && 'setCodecPreferences' in window.RTCRtpTransceiver.prototype
 
+  const playerDiv = renderRoot.querySelector('#player')
   const messageDiv = renderRoot.querySelector('#message')
   messageDiv.style.display = 'none'
 
-  const playerDiv = renderRoot.querySelector('#player')
-  const lockMouseCheck = renderRoot.querySelector('#lockMouseCheck')
   const videoPlayer = new VideoPlayer()
 
   setup()
@@ -53,42 +49,17 @@ export function start(renderRoot) {
     useWebSocket = res.useWebSocket
     showWarningIfNeeded(res.startupMode)
     showCodecSelect()
-    showPlayButton()
-  }
 
-  function showWarningIfNeeded(startupMode) {
-    const warningDiv = renderRoot.querySelector('#warning')
-    if (startupMode == 'private') {
-      warningDiv.innerHTML
-        = '<h4>Warning</h4> This sample is not working on Private Mode.'
-      warningDiv.hidden = false
-    }
-  }
-
-  function showPlayButton() {
-    if (!renderRoot.getElementById('playButton')) {
-      const elementPlayButton = document.createElement('img')
-      elementPlayButton.id = 'playButton'
-      elementPlayButton.src = '../../images/Play.png'
-      elementPlayButton.alt = 'Start Streaming'
-      playButton = renderRoot
-        .getElementById('player')
-        .appendChild(elementPlayButton)
-      playButton.addEventListener('click', onClickPlayButton)
-    }
-  }
-
-  function onClickPlayButton() {
-    playButton.style.display = 'none'
-
-    // add video player
-    videoPlayer.createPlayer(playerDiv, lockMouseCheck)
+    videoPlayer.createPlayer(playerDiv)
     setupRenderStreaming()
   }
 
-  async function setupRenderStreaming() {
-    codecPreferences.disabled = true
+  function showWarningIfNeeded(startupMode) {
+    if (startupMode === 'private')
+      console.error('This sample is not working on Private Mode.')
+  }
 
+  async function setupRenderStreaming() {
     const signaling = useWebSocket ? new WebSocketSignaling() : new Signaling()
     const config = getRTCConfiguration()
     renderstreaming = new RenderStreaming(signaling, config)
@@ -115,35 +86,17 @@ export function start(renderRoot) {
     await renderstreaming.stop()
     renderstreaming = null
     videoPlayer.deletePlayer()
-    if (supportsSetCodecPreferences)
-      codecPreferences.disabled = false
-
-    showPlayButton()
   }
 
   function setCodecPreferences() {
-    /** @type {RTCRtpCodecCapability[] | null} */
-    let selectedCodecs = null
-    if (supportsSetCodecPreferences) {
-      const preferredCodec
-        = codecPreferences.options[codecPreferences.selectedIndex]
-      if (preferredCodec.value !== '') {
-        const [mimeType, sdpFmtpLine] = preferredCodec.value.split(' ')
-        const { codecs } = RTCRtpSender.getCapabilities('video')
-        const selectedCodecIndex = codecs.findIndex(
-          c => c.mimeType === mimeType && c.sdpFmtpLine === sdpFmtpLine,
-        )
-        const selectCodec = codecs[selectedCodecIndex]
-        selectedCodecs = [selectCodec]
-      }
-    }
+    const selectedCodecs = null
 
     if (selectedCodecs == null)
       return
 
     const transceivers = renderstreaming
       .getTransceivers()
-      .filter(t => t.receiver.track.kind == 'video')
+      .filter(t => t.receiver.track.kind === 'video')
     if (transceivers && transceivers.length > 0)
       transceivers.forEach(t => t.setCodecPreferences(selectedCodecs))
   }
@@ -156,16 +109,7 @@ export function start(renderRoot) {
     }
 
     const codecs = RTCRtpSender.getCapabilities('video').codecs
-    codecs.forEach((codec) => {
-      if (['video/red', 'video/ulpfec', 'video/rtx'].includes(codec.mimeType))
-        return
-
-      const option = document.createElement('option')
-      option.value = (`${codec.mimeType} ${codec.sdpFmtpLine || ''}`).trim()
-      option.innerText = option.value
-      codecPreferences.appendChild(option)
-    })
-    codecPreferences.disabled = false
+    console.log(codecs)
   }
 
   /** @type {RTCStatsReport} */

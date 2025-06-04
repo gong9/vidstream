@@ -16,12 +16,12 @@ export class RenderStreaming {
   constructor(signaling, config) {
     this._peer = null
     this._connectionId = null
-    this.onConnect = function (connectionId) { Logger.log(`Connect peer on ${connectionId}.`) }
-    this.onDisconnect = function (connectionId) { Logger.log(`Disconnect peer on ${connectionId}.`) }
-    this.onGotOffer = function (connectionId) { Logger.log(`On got Offer on ${connectionId}.`) }
-    this.onGotAnswer = function (connectionId) { Logger.log(`On got Answer on ${connectionId}.`) }
-    this.onTrackEvent = function (data) { Logger.log(`OnTrack event peer with data:${data}`) }
-    this.onAddChannel = function (data) { Logger.log(`onAddChannel event peer with data:${data}`) }
+    this.onConnect = function (connectionId) { console.log(`Connect peer on ${connectionId}.`) }
+    this.onDisconnect = function (connectionId) { console.log(`Disconnect peer on ${connectionId}.`) }
+    this.onGotOffer = function (connectionId) { console.log(`On got Offer on ${connectionId}.`) }
+    this.onGotAnswer = function (connectionId) { console.log(`On got Answer on ${connectionId}.`) }
+    this.onTrackEvent = function (data) { console.log(`OnTrack event peer with data:${data}`) }
+    this.onAddChannel = function (data) { console.log(`onAddChannel event peer with data:${data}`) }
 
     this._config = config
     this._signaling = signaling
@@ -34,7 +34,7 @@ export class RenderStreaming {
 
   async _onConnect(e) {
     const data = e.detail
-    if (this._connectionId == data.connectionId) {
+    if (this._connectionId === data.connectionId) {
       this._preparePeerConnection(this._connectionId, data.polite)
       this.onConnect(data.connectionId)
     }
@@ -42,7 +42,7 @@ export class RenderStreaming {
 
   async _onDisconnect(e) {
     const data = e.detail
-    if (this._connectionId == data.connectionId) {
+    if (this._connectionId === data.connectionId) {
       this.onDisconnect(data.connectionId)
       if (this._peer) {
         this._peer.close()
