@@ -1,6 +1,6 @@
 {
   "name": "streaming-video-component",
-  "version": "0.0.1",
+  "version": "0.0.1-alpha.3",
   "description": "Streaming video component",
   "main": "dist/streaming-video.umd.js",
   "module": "dist/streaming-video.es.js",
@@ -15,6 +15,11 @@
   "dependencies": {
     "lit": "^3.2.1"
   },
+  "files": [
+    "dist",
+    "package.json",
+    "README.md"
+  ],
   "devDependencies": {
     "@antfu/eslint-config": "^0.38.5",
     "eslint": "^8.23.0",

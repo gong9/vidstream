@@ -8,7 +8,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: ['src/streaming-video.ts'],
-      fileName: (format, entryName) => `streaming-video-${entryName}.${format}.js`,
+      fileName: (format, entryName) => `${entryName}.${format}.js`,
       name: 'streamingVideo',
       formats: ['es', 'umd'],
     },
