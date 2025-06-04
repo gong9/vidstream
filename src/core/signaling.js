@@ -138,7 +138,7 @@ export class WebSocketSignaling extends EventTarget {
     if (location.protocol === 'https:')
       websocketUrl = `wss://${location.host}`
     else
-      websocketUrl = config.wsUrl
+      websocketUrl = `ws://${config.host}`
 
     this.websocket = new WebSocket(websocketUrl)
     this.connectionId = null

@@ -96,6 +96,7 @@ export class PointerCorrector {
         return (rect.width - width) * 0.5
       }
     }
+    // eslint-disable-next-line no-throw-literal
     throw 'invalid status'
   }
 
@@ -110,10 +111,10 @@ export class PointerCorrector {
 
     const rect = this._videoElem.getBoundingClientRect()
 
-    const x = letterBoxType == LetterBoxType.Vertical ? letterBoxSize : 0
-    const y = letterBoxType == LetterBoxType.Horizontal ? letterBoxSize : 0
-    const width = letterBoxType == LetterBoxType.Vertical ? rect.width - letterBoxSize * 2 : rect.width
-    const height = letterBoxType == LetterBoxType.Horizontal ? rect.height - letterBoxSize * 2 : rect.height
+    const x = letterBoxType === LetterBoxType.Vertical ? letterBoxSize : 0
+    const y = letterBoxType === LetterBoxType.Horizontal ? letterBoxSize : 0
+    const width = letterBoxType === LetterBoxType.Vertical ? rect.width - letterBoxSize * 2 : rect.width
+    const height = letterBoxType === LetterBoxType.Horizontal ? rect.height - letterBoxSize * 2 : rect.height
 
     return { x, y, width, height }
   }

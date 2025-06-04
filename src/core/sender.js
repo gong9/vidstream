@@ -131,7 +131,7 @@ export class Sender extends LocalInputManager {
   }
 
   _onKeyEvent(event) {
-    if (event.type == 'keydown') {
+    if (event.type === 'keydown') {
       if (!event.repeat) { // StateEvent
         this.keyboard.queueEvent(event)
         this._queueStateEvent(this.keyboard.currentState, this.keyboard)
@@ -139,7 +139,7 @@ export class Sender extends LocalInputManager {
       // TextEvent
       this._queueTextEvent(this.keyboard, event)
     }
-    else if (event.type == 'keyup') {
+    else if (event.type === 'keyup') {
       this.keyboard.queueEvent(event)
       this._queueStateEvent(this.keyboard.currentState, this.keyboard)
     }
@@ -208,9 +208,10 @@ export class Observer {
    * @param {Message} message
    */
   onNext(message) {
-    if (this.channel == null || this.channel.readyState != 'open')
+    if (this.channel == null || this.channel.readyState !== 'open')
       return
 
+    console.log('onNext', message.buffer)
     this.channel.send(message.buffer)
   }
 }

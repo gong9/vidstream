@@ -377,7 +377,7 @@ export class TouchState {
   constructor(touchId, prevState, position, pressure, radius, phaseId, time) {
     this.touchId = touchId
     this.position = position != null ? position.slice() : null
-    if (phaseId == TouchPhase.Moved)
+    if (phaseId === TouchPhase.Moved)
       this.delta = [this.position[0] - prevState.position[0], this.position[1] - prevState.position[1]]
     else
       this.delta = [0, 0]
@@ -389,7 +389,7 @@ export class TouchState {
     this.displayIndex = 0
     this.flags = 0
     this.padding = 0
-    if (phaseId == TouchPhase.Began) {
+    if (phaseId === TouchPhase.Began) {
       this.startTime = time
       this.startPosition = this.position.slice()
     }
@@ -483,7 +483,7 @@ export class TouchscreenState extends IInputState {
         this.touchData = new Array(state.touchData.length)
         for (let i = 0; i < state.touchData.length; i++) {
           this.touchData[i] = state.touchData[i]
-          if (this.touchData[i].phaseId == TouchPhase.Ended) {
+          if (this.touchData[i].phaseId === TouchPhase.Ended) {
             this.touchData[i].tapCount = 1
             this.touchData[i].flags |= TouchFlags.Tap
           }
@@ -502,8 +502,8 @@ export class TouchscreenState extends IInputState {
 
           // `touchId` in InputSystem must be set uniquely.
           // The numbers of `touch.identifier` in Web API are reused, so these are not unique.
-          const touchId = phaseId == TouchPhase.Began ? TouchState.incrementTouchId() : TouchState.prevTouches()[touch.identifier].touchId
-          const prevState = phaseId != TouchPhase.Began ? TouchState.prevTouches()[touch.identifier] : null
+          const touchId = phaseId === TouchPhase.Began ? TouchState.incrementTouchId() : TouchState.prevTouches()[touch.identifier].touchId
+          const prevState = phaseId !== TouchPhase.Began ? TouchState.prevTouches()[touch.identifier] : null
           const touchData = new TouchState(touchId, prevState, position, pressure, radius, phaseId, time)
 
           // cache state

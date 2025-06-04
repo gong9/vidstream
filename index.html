@@ -8,12 +8,16 @@
       margin: 0;
       padding: 0;
     }
+
+    html {
+      overflow: hidden;
+    }
   </style>
   <title>Streaming Video</title>
 </head>
 
 <body>
-  <streaming-video url="ws://localhost:80" width="100%" height="100%" />
+  <streaming-video host="localhost:80" width="100%" height="100%" />
   <script type="module" src="./src/streaming-video.ts"></script>
 </body>
 

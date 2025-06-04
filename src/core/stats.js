@@ -11,7 +11,7 @@ export function createDisplayStringArray(report, lastReport) {
     if (stat.type === 'inbound-rtp') {
       array.push(`${stat.kind} receiving stream stats`)
 
-      if (stat.codecId != undefined) {
+      if (stat.codecId !== undefined) {
         const codec = report.get(stat.codecId)
         array.push(`Codec: ${codec.mimeType}`)
 
@@ -31,7 +31,7 @@ export function createDisplayStringArray(report, lastReport) {
           array.push(` - channels=${codec.channels}`)
       }
 
-      if (stat.kind == 'video') {
+      if (stat.kind === 'video') {
         array.push(`Decoder: ${stat.decoderImplementation}`)
         array.push(`Resolution: ${stat.frameWidth}x${stat.frameHeight}`)
         array.push(`Framerate: ${stat.framesPerSecond}`)
@@ -47,7 +47,7 @@ export function createDisplayStringArray(report, lastReport) {
     else if (stat.type === 'outbound-rtp') {
       array.push(`${stat.kind} sending stream stats`)
 
-      if (stat.codecId != undefined) {
+      if (stat.codecId !== undefined) {
         const codec = report.get(stat.codecId)
         array.push(`Codec: ${codec.mimeType}`)
 
@@ -67,7 +67,7 @@ export function createDisplayStringArray(report, lastReport) {
           array.push(` - channels=${codec.channels}`)
       }
 
-      if (stat.kind == 'video') {
+      if (stat.kind === 'video') {
         array.push(`Encoder: ${stat.encoderImplementation}`)
         array.push(`Resolution: ${stat.frameWidth}x${stat.frameHeight}`)
         array.push(`Framerate: ${stat.framesPerSecond}`)

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-this-alias */
+/* eslint-disable no-void */
 import * as Logger from './logger.js'
 
 export default class Peer extends EventTarget {
@@ -96,50 +98,50 @@ export default class Peer extends EventTarget {
   }
 
   getTransceivers(connectionId) {
-    if (this.connectionId != connectionId)
+    if (this.connectionId !== connectionId)
       return null
 
     return this.pc.getTransceivers()
   }
 
   addTrack(connectionId, track) {
-    if (this.connectionId != connectionId)
+    if (this.connectionId !== connectionId)
       return null
 
     return this.pc.addTrack(track)
   }
 
   addTransceiver(connectionId, trackOrKind, init) {
-    if (this.connectionId != connectionId)
+    if (this.connectionId !== connectionId)
       return null
 
     return this.pc.addTransceiver(trackOrKind, init)
   }
 
   createDataChannel(connectionId, label) {
-    if (this.connectionId != connectionId)
+    if (this.connectionId !== connectionId)
       return null
 
     return this.pc.createDataChannel(label)
   }
 
   async getStats(connectionId) {
-    if (this.connectionId != connectionId)
+    if (this.connectionId !== connectionId)
       return null
 
     return await this.pc.getStats()
   }
 
   async onGotDescription(connectionId, description) {
-    if (this.connectionId != connectionId)
+    if (this.connectionId !== connectionId)
       return
 
     const _this = this
     const isStable
-      = this.pc.signalingState == 'stable'
-      || (this.pc.signalingState == 'have-local-offer' && this.srdAnswerPending)
+      = this.pc.signalingState === 'stable'
+      || (this.pc.signalingState === 'have-local-offer' && this.srdAnswerPending)
     this.ignoreOffer
-      = description.type == 'offer' && !this.polite && (this.makingOffer || !isStable)
+      = description.type === 'offer' && !this.polite && (this.makingOffer || !isStable)
 
     if (this.ignoreOffer) {
       _this.log('glare - ignoring offer')
@@ -147,12 +149,12 @@ export default class Peer extends EventTarget {
     }
 
     this.waitingAnswer = false
-    this.srdAnswerPending = description.type == 'answer'
+    this.srdAnswerPending = description.type === 'answer'
     _this.log(`SRD(${description.type})`)
     await this.pc.setRemoteDescription(description)
     this.srdAnswerPending = false
 
-    if (description.type == 'offer') {
+    if (description.type === 'offer') {
       _this.dispatchEvent(new CustomEvent('ongotoffer', { detail: { connectionId: _this.connectionId } }))
 
       _this.assert_equals(this.pc.signalingState, 'have-remote-offer', 'Remote offer')
@@ -173,7 +175,7 @@ export default class Peer extends EventTarget {
   }
 
   async onGotCandidate(connectionId, candidate) {
-    if (this.connectionId != connectionId)
+    if (this.connectionId !== connectionId)
       return
 
     try {
