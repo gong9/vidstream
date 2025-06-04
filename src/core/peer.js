@@ -24,6 +24,8 @@ export default class Peer extends EventTarget {
         }
     this.interval = resendIntervalMsec
     this.sleep = msec => new Promise(resolve => setTimeout(resolve, msec))
+    this.offerRetryCount = 0
+    this.maxOfferRetries = 2
 
     this.pc.ontrack = (e) => {
       _this.log(`ontrack:${e}`)
@@ -70,6 +72,7 @@ export default class Peer extends EventTarget {
       this.assert_equals(this.pc.signalingState, 'have-local-offer', 'negotiationneeded not racing with onmessage')
       this.assert_equals(this.pc.localDescription.type, 'offer', 'negotiationneeded SLD worked')
       this.waitingAnswer = true
+      this.offerRetryCount = 0
       this.dispatchEvent(new CustomEvent('sendoffer', { detail: { connectionId: this.connectionId, sdp: this.pc.localDescription.sdp } }))
     }
     catch (e) {
@@ -82,9 +85,29 @@ export default class Peer extends EventTarget {
 
   async loopResendOffer() {
     while (this.connectionId) {
-      if (this.pc && this.waitingAnswer)
-        this.dispatchEvent(new CustomEvent('sendoffer', { detail: { connectionId: this.connectionId, sdp: this.pc.localDescription.sdp } }))
-
+      if (this.pc && this.waitingAnswer) {
+        if (this.offerRetryCount < this.maxOfferRetries) {
+          this.offerRetryCount++
+          this.dispatchEvent(new CustomEvent('sendoffer', {
+            detail: {
+              connectionId: this.connectionId,
+              sdp: this.pc.localDescription.sdp,
+            },
+          }))
+          this.log(`Resending offer attempt ${this.offerRetryCount}/${this.maxOfferRetries}`)
+        }
+        else {
+          this.log('Max offer retries reached, stopping offer resend')
+          this.waitingAnswer = false
+          this.dispatchEvent(new CustomEvent('connectionfailed', {
+            detail: {
+              connectionId: this.connectionId,
+              reason: 'Max offer retries reached',
+            },
+          }))
+          break
+        }
+      }
       await this.sleep(this.interval)
     }
   }
@@ -171,6 +194,11 @@ export default class Peer extends EventTarget {
       _this.assert_equals(this.pc.remoteDescription.type, 'answer', 'Answer was set')
       _this.assert_equals(this.pc.signalingState, 'stable', 'answered')
       this.pc.dispatchEvent(new Event('negotiated'))
+    }
+
+    if (description.type === 'answer') {
+      this.waitingAnswer = false
+      this.offerRetryCount = 0
     }
   }
 

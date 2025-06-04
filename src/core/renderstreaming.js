@@ -16,12 +16,24 @@ export class RenderStreaming {
   constructor(signaling, config) {
     this._peer = null
     this._connectionId = null
-    this.onConnect = function (connectionId) { console.log(`Connect peer on ${connectionId}.`) }
-    this.onDisconnect = function (connectionId) { console.log(`Disconnect peer on ${connectionId}.`) }
-    this.onGotOffer = function (connectionId) { console.log(`On got Offer on ${connectionId}.`) }
-    this.onGotAnswer = function (connectionId) { console.log(`On got Answer on ${connectionId}.`) }
-    this.onTrackEvent = function (data) { console.log(`OnTrack event peer with data:${data}`) }
-    this.onAddChannel = function (data) { console.log(`onAddChannel event peer with data:${data}`) }
+    this.onConnect = function (connectionId) {
+      console.log(`Connect peer on ${connectionId}.`)
+    }
+    this.onDisconnect = function (connectionId) {
+      console.log(`Disconnect peer on ${connectionId}.`)
+    }
+    this.onGotOffer = function (connectionId) {
+      console.log(`On got Offer on ${connectionId}.`)
+    }
+    this.onGotAnswer = function (connectionId) {
+      console.log(`On got Answer on ${connectionId}.`)
+    }
+    this.onTrackEvent = function (data) {
+      console.log(`OnTrack event peer with data:${data}`)
+    }
+    this.onAddChannel = function (data) {
+      console.log(`onAddChannel event peer with data:${data}`)
+    }
 
     this._config = config
     this._signaling = signaling
@@ -107,37 +119,52 @@ export class RenderStreaming {
 
     // Create peerConnection with proxy server and set up handlers
     this._peer = new Peer(connectionId, polite, this._config)
+
     this._peer.addEventListener('disconnect', () => {
       this.onDisconnect(`Receive disconnect message from peer. connectionId:${connectionId}`)
     })
+
     this._peer.addEventListener('trackevent', (e) => {
       const data = e.detail
       this.onTrackEvent(data)
     })
+
     this._peer.addEventListener('adddatachannel', (e) => {
       const data = e.detail
       this.onAddChannel(data)
     })
+
     this._peer.addEventListener('ongotoffer', (e) => {
       const id = e.detail.connectionId
       this.onGotOffer(id)
     })
+
     this._peer.addEventListener('ongotanswer', (e) => {
       const id = e.detail.connectionId
       this.onGotAnswer(id)
     })
+
     this._peer.addEventListener('sendoffer', (e) => {
       const offer = e.detail
       this._signaling.sendOffer(offer.connectionId, offer.sdp)
     })
+
     this._peer.addEventListener('sendanswer', (e) => {
       const answer = e.detail
       this._signaling.sendAnswer(answer.connectionId, answer.sdp)
     })
+
     this._peer.addEventListener('sendcandidate', (e) => {
       const candidate = e.detail
       this._signaling.sendCandidate(candidate.connectionId, candidate.candidate, candidate.sdpMid, candidate.sdpMLineIndex)
     })
+
+    this._peer.addEventListener('connectionfailed', (e) => {
+      const data = e.detail
+      Logger.warn(`Connection failed after max retries: ${data.reason}`)
+      this.onDisconnect(`Connection failed after max retries. connectionId:${data.connectionId}`)
+    })
+
     return this._peer
   }
 

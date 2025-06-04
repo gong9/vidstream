@@ -1,9 +1,17 @@
 import { getServers } from './icesettings.js'
 
-export async function getServerConfig() {
+export async function getServerConfig(messageDiv) {
   const protocolEndPoint = `${location.origin}/config`
-  const createResponse = await fetch(protocolEndPoint)
-  return await createResponse.json()
+
+  try {
+    const createResponse = await fetch(protocolEndPoint)
+    return await createResponse.json()
+  }
+  catch (error) {
+    messageDiv.style.display = 'block'
+    messageDiv.innerText = 'Error fetching server config'
+    throw error
+  }
 }
 
 export function getRTCConfiguration() {

@@ -45,7 +45,7 @@ export function start(renderRoot) {
   )
 
   async function setup() {
-    const res = await getServerConfig()
+    const res = await getServerConfig(messageDiv)
     useWebSocket = res.useWebSocket
     showWarningIfNeeded(res.startupMode)
     showCodecSelect()
