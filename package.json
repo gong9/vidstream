@@ -1,6 +1,6 @@
 {
-  "name": "streaming-video-component",
-  "version": "0.0.1-alpha.3",
+  "name": "vidstream",
+  "version": "0.0.1",
   "description": "Streaming video component",
   "main": "dist/streaming-video.umd.js",
   "module": "dist/streaming-video.es.js",
@@ -8,7 +8,6 @@
   "scripts": {
     "dev": "vite --config vite.config.development.ts",
     "build": "vite build --config vite.config.ts",
-    "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },

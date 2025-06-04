@@ -1,4 +1,4 @@
-import { getRTCConfiguration, getServerConfig } from '../core/config.js'
+import { getRTCConfiguration } from '../core/config.js'
 import { createDisplayStringArray } from '../core/stats.js'
 import { VideoPlayer } from '../core/videoplayer.js'
 import { RenderStreaming } from '../core/renderstreaming.js'
@@ -7,7 +7,7 @@ import { Signaling, WebSocketSignaling } from '../core/signaling.js'
 /** @type {RenderStreaming} */
 let renderstreaming
 /** @type {boolean} */
-let useWebSocket
+const useWebSocket = true
 
 export function start(renderRoot) {
   const supportsSetCodecPreferences
@@ -45,23 +45,16 @@ export function start(renderRoot) {
   )
 
   async function setup() {
-    const res = await getServerConfig(messageDiv)
-    useWebSocket = res.useWebSocket
-    showWarningIfNeeded(res.startupMode)
     showCodecSelect()
 
     videoPlayer.createPlayer(playerDiv)
     setupRenderStreaming()
   }
 
-  function showWarningIfNeeded(startupMode) {
-    if (startupMode === 'private')
-      console.error('This sample is not working on Private Mode.')
-  }
-
   async function setupRenderStreaming() {
     const signaling = useWebSocket ? new WebSocketSignaling() : new Signaling()
     const config = getRTCConfiguration()
+
     renderstreaming = new RenderStreaming(signaling, config)
     renderstreaming.onConnect = onConnect
     renderstreaming.onDisconnect = onDisconnect
