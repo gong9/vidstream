@@ -211,7 +211,6 @@ export class Observer {
     if (this.channel == null || this.channel.readyState !== 'open')
       return
 
-    console.log('onNext', message.buffer)
     this.channel.send(message.buffer)
   }
 }

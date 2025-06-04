@@ -72,6 +72,7 @@ export class PointerCorrector {
     this._videoWidth = videoWidth
     this._videoHeight = videoHeight
     this._videoElem = videoElem
+
     this._reset()
   }
 
@@ -116,6 +117,7 @@ export class PointerCorrector {
     const width = letterBoxType === LetterBoxType.Vertical ? rect.width - letterBoxSize * 2 : rect.width
     const height = letterBoxType === LetterBoxType.Horizontal ? rect.height - letterBoxSize * 2 : rect.height
 
+    console.log('contentRect', { x, y, width, height })
     return { x, y, width, height }
   }
 

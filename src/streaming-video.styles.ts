@@ -15,5 +15,7 @@ export const styles = css`
     top: 75px;
     left: 25px;
     color: green;
+    height: 50%;
+    overflow-y: auto;
   }
 `
