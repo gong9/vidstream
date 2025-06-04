@@ -21,6 +21,6 @@ export const GamepadButton = {
   B: 5, // East,
   Cross: 6, // South,
   Square: 7, // West,
-  Triangle: 4, //North,
-  Circle: 5 // East,
-};
+  Triangle: 4, // North,
+  Circle: 5, // East,
+}

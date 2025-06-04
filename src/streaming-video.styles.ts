@@ -1,4 +1,4 @@
-import { css } from "lit";
+import { css } from 'lit'
 
 export const styles = css`
   #player {
@@ -40,4 +40,4 @@ export const styles = css`
     width: 32px;
     height: 32px;
   }
-`; 
+`

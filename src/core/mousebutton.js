@@ -4,4 +4,4 @@ export const MouseButton = {
   Middle: 2,
   Foaward: 3,
   Back: 4,
-};
+}

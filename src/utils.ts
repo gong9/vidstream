@@ -1,22 +1,37 @@
-/**
- * create display string array from RTCStatsReport
- * @param {RTCStatsReport} report - current RTCStatsReport
- * @param {RTCStatsReport} lastReport - latest RTCStatsReport
- * @return {Array<string>} - display string Array
- */
-export function createDisplayStringArray(report, lastReport) {
-  const array = []
+const allServersKey = 'servers'
 
-  report.forEach((stat) => {
+export function getServers() {
+  const storedServers = window.localStorage.getItem(allServersKey)
+
+  if (storedServers === null || storedServers === '')
+    return [{ urls: ['stun:stun.l.google.com:19302'] }]
+
+  else
+    return JSON.parse(storedServers)
+}
+
+export function getRTCConfiguration(): RTCConfiguration {
+  const config: RTCConfiguration = {
+    iceServers: getServers(),
+    // @ts-expect-error
+    sdpSemantics: 'unified-plan',
+  }
+  return config
+}
+
+export function createDisplayStringArray(report: any, lastReport: any) {
+  const array: string[] = []
+
+  report.forEach((stat: any) => {
     if (stat.type === 'inbound-rtp') {
       array.push(`${stat.kind} receiving stream stats`)
 
-      if (stat.codecId != undefined) {
+      if (stat.codecId !== undefined) {
         const codec = report.get(stat.codecId)
         array.push(`Codec: ${codec.mimeType}`)
 
         if (codec.sdpFmtpLine) {
-          codec.sdpFmtpLine.split(';').forEach((fmtp) => {
+          codec.sdpFmtpLine.split(';').forEach((fmtp: any) => {
             array.push(` - ${fmtp}`)
           })
         }
@@ -31,7 +46,7 @@ export function createDisplayStringArray(report, lastReport) {
           array.push(` - channels=${codec.channels}`)
       }
 
-      if (stat.kind == 'video') {
+      if (stat.kind === 'video') {
         array.push(`Decoder: ${stat.decoderImplementation}`)
         array.push(`Resolution: ${stat.frameWidth}x${stat.frameHeight}`)
         array.push(`Framerate: ${stat.framesPerSecond}`)
@@ -47,12 +62,12 @@ export function createDisplayStringArray(report, lastReport) {
     else if (stat.type === 'outbound-rtp') {
       array.push(`${stat.kind} sending stream stats`)
 
-      if (stat.codecId != undefined) {
+      if (stat.codecId !== undefined) {
         const codec = report.get(stat.codecId)
         array.push(`Codec: ${codec.mimeType}`)
 
         if (codec.sdpFmtpLine) {
-          codec.sdpFmtpLine.split(';').forEach((fmtp) => {
+          codec.sdpFmtpLine.split(';').forEach((fmtp: any) => {
             array.push(` - ${fmtp}`)
           })
         }
@@ -67,7 +82,7 @@ export function createDisplayStringArray(report, lastReport) {
           array.push(` - channels=${codec.channels}`)
       }
 
-      if (stat.kind == 'video') {
+      if (stat.kind === 'video') {
         array.push(`Encoder: ${stat.encoderImplementation}`)
         array.push(`Resolution: ${stat.frameWidth}x${stat.frameHeight}`)
         array.push(`Framerate: ${stat.framesPerSecond}`)

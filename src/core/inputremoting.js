@@ -1,14 +1,14 @@
-import { 
+import {
   StateEvent,
-} from "./inputdevice.js";
+} from './inputdevice.js'
 
 import {
-  MemoryHelper
-} from "./memoryhelper.js";
+  MemoryHelper,
+} from './memoryhelper.js'
 
 export class LocalInputManager {
   constructor() {
-    this._onevent = new EventTarget();
+    this._onevent = new EventTarget()
   }
 
   /**
@@ -16,35 +16,35 @@ export class LocalInputManager {
    * @return {Event}
    */
   get onEvent() {
-    return this._onevent;
+    return this._onevent
   }
 
   /**
    * @return {Event}
    */
   get devices() {
-    throw new Error(`Please implement this method.`);
+    throw new Error('Please implement this method.')
   }
 
   /**
    * @return {Number} time (sec)
    */
   get startTime() {
-    return this._startTime;
+    return this._startTime
   }
 
   /**
    * @return {Number} time (sec)
    */
   get timeSinceStartup() {
-    return Date.now()/1000 - this.startTime;
+    return Date.now() / 1000 - this.startTime
   }
 
   /**
    * @param {Number} time (sec)
    */
   setStartTime(time) {
-    this._startTime = time;
+    this._startTime = time
   }
 }
 
@@ -57,57 +57,57 @@ export const InputDeviceChange = {
   Disabled: 5,
   UsageChanged: 6,
   ConfigurationChanged: 7,
-  Destroyed: 8, 
-};
+  Destroyed: 8,
+}
 
 export class InputRemoting {
   /**
-   * @param {LocalInputManager} manager 
+   * @param {LocalInputManager} manager
    */
   constructor(manager) {
-    this._localManager = manager;
-    this._subscribers = new Array();
-    this._sending = false;
+    this._localManager = manager
+    this._subscribers = []
+    this._sending = false
   }
 
   startSending() {
-    if(this._sending) {
-      return;
+    if (this._sending)
+      return
+
+    this._sending = true
+
+    const onEvent = (e) => {
+      this._sendEvent(e.detail.event)
     }
-    this._sending = true;
 
-    const onEvent = e => {
-      this._sendEvent(e.detail.event);
-    };
+    const onDeviceChange = (e) => {
+      this._sendDeviceChange(e.detail.device, e.detail.change)
+    }
 
-    const onDeviceChange = e => {
-      this._sendDeviceChange(e.detail.device, e.detail.change);
-    };
-
-    this._localManager.setStartTime(Date.now()/1000);
-    this._localManager.onEvent.addEventListener("event", onEvent);
-    this._localManager.onEvent.addEventListener("changedeviceusage", onDeviceChange);
-    this._sendInitialMessages();
+    this._localManager.setStartTime(Date.now() / 1000)
+    this._localManager.onEvent.addEventListener('event', onEvent)
+    this._localManager.onEvent.addEventListener('changedeviceusage', onDeviceChange)
+    this._sendInitialMessages()
   }
 
   stopSending() {
-    if (!this._sending) {
-      return;
-    }
-    this._sending = false;
+    if (!this._sending)
+      return
+
+    this._sending = false
   }
 
   /**
-   * 
-   * @param {Observer} observer 
+   *
+   * @param {Observer} observer
    */
   subscribe(observer) {
-    this._subscribers.push(observer);
+    this._subscribers.push(observer)
   }
 
   _sendInitialMessages() {
-   this._sendAllGeneratedLayouts();
-   this._sendAllDevices();
+    this._sendAllGeneratedLayouts()
+    this._sendAllDevices()
   }
 
   _sendAllGeneratedLayouts() {
@@ -115,17 +115,16 @@ export class InputRemoting {
   }
 
   _sendAllDevices() {
-    var devices = this._localManager.devices;
-    if(devices == null)
-      return;
-    for (const device of devices) {
-      this._sendDevice(device);
-    }
+    const devices = this._localManager.devices
+    if (devices == null)
+      return
+    for (const device of devices)
+      this._sendDevice(device)
   }
 
   _sendDevice(device) {
-    const newDeviceMessage = NewDeviceMsg.create(device);
-    this._send(newDeviceMessage);
+    const newDeviceMessage = NewDeviceMsg.create(device)
+    this._send(newDeviceMessage)
 
     // Send current state. We do this here in this case as the device
     // may have been added some time ago and thus have already received events.
@@ -136,35 +135,34 @@ export class InputRemoting {
   }
 
   _sendEvent(event) {
-    const message = NewEventsMsg.create(event);
-    this._send(message);
+    const message = NewEventsMsg.create(event)
+    this._send(message)
   }
 
   _sendDeviceChange(device, change) {
     if (this._subscribers == null)
-      return;
+      return
 
-    let msg = null;
+    let msg = null
     switch (change) {
       case InputDeviceChange.Added:
-        msg = NewDeviceMsg.Create(device);
-        break;
+        msg = NewDeviceMsg.Create(device)
+        break
       case InputDeviceChange.Removed:
-        msg = RemoveDeviceMsg.Create(device);
-        break;
+        msg = RemoveDeviceMsg.Create(device)
+        break
       case InputDeviceChange.UsageChanged:
-        msg = ChangeUsageMsg.Create(device);
-        break;
+        msg = ChangeUsageMsg.Create(device)
+        break
       default:
-        return;
+        return
     }
-    this._send(msg);
-  }  
+    this._send(msg)
+  }
 
   _send(message) {
-    for(let subscriber of this._subscribers) {
-      subscriber.onNext(message);
-    }
+    for (const subscriber of this._subscribers)
+      subscriber.onNext(message)
   }
 }
 
@@ -179,61 +177,61 @@ export const MessageType = {
   ChangeUsages: 7,
   StartSending: 8,
   StopSending: 9,
-};
+}
 
 export class Message {
   /**
    * field offset 0
    * {Number} participant_id;
-   * 
+   *
    * field offset 4
    * {Number} type;
-   * 
+   *
    * field offset 8
    * {Number} length;
-   * 
+   *
    * field offset 12
    * {ArrayBuffer} data;
    */
 
   /**
-   * 
-   * @param {number} participantId 
-   * @param {MessageType} type 
-   * @param {ArrayBuffer} data 
+   *
+   * @param {number} participantId
+   * @param {MessageType} type
+   * @param {ArrayBuffer} data
    */
   constructor(participantId, type, data) {
-    this.participant_id = participantId;
-    this.type = type;
-    this.length = data.byteLength;
-    this.data = data;
+    this.participant_id = participantId
+    this.type = type
+    this.length = data.byteLength
+    this.data = data
   }
 
   /**
-   * 
+   *
    * @returns {ArrayBuffer}
    */
   get buffer() {
-    const totalSize = 
-      MemoryHelper.sizeOfInt + // size of this.participant_id
-      MemoryHelper.sizeOfInt + // size of this.type
-      MemoryHelper.sizeOfInt + // size of this.length
-      this.data.byteLength;    // size of this.data
+    const totalSize
+      = MemoryHelper.sizeOfInt // size of this.participant_id
+      + MemoryHelper.sizeOfInt // size of this.type
+      + MemoryHelper.sizeOfInt // size of this.length
+      + this.data.byteLength // size of this.data
 
-    let buffer = new ArrayBuffer(totalSize);
-    let dataView = new DataView(buffer);
-    let uint8view =  new Uint8Array(buffer);
-    dataView.setUint32(0, this.participant_id, true);
-    dataView.setUint32(4, this.type, true);
-    dataView.setUint32(8, this.length, true);
-    uint8view.set(new Uint8Array(this.data), 12);
-    return buffer;
+    const buffer = new ArrayBuffer(totalSize)
+    const dataView = new DataView(buffer)
+    const uint8view = new Uint8Array(buffer)
+    dataView.setUint32(0, this.participant_id, true)
+    dataView.setUint32(4, this.type, true)
+    dataView.setUint32(8, this.length, true)
+    uint8view.set(new Uint8Array(this.data), 12)
+    return buffer
   }
 }
 
 export class NewDeviceMsg {
   /**
-   * @param {InputDevice} device 
+   * @param {InputDevice} device
    * @returns {Message}
    */
   static create(device) {
@@ -242,58 +240,57 @@ export class NewDeviceMsg {
       layout: device.layout,
       deviceId: device.deviceId,
       variants: device.variants,
-      description: device.description
-    };
-    const json = JSON.stringify(data);
-    let buffer = new ArrayBuffer(json.length*2); // 2 bytes for each char
-    let view = new Uint8Array(buffer);
-    const length = json.length;
-    for (let i = 0; i < length; i++) {
-      view[i] = json.charCodeAt(i);
+      description: device.description,
     }
-    return new Message(0, MessageType.NewDevice, buffer);
+    const json = JSON.stringify(data)
+    const buffer = new ArrayBuffer(json.length * 2) // 2 bytes for each char
+    const view = new Uint8Array(buffer)
+    const length = json.length
+    for (let i = 0; i < length; i++)
+      view[i] = json.charCodeAt(i)
+
+    return new Message(0, MessageType.NewDevice, buffer)
   }
 }
 
 export class NewEventsMsg {
   /**
-   * 
+   *
    * @param {InputDevice} device
    * @returns {Message}
    */
   static createStateEvent(device) {
-    const events = StateEvent.from(device);
-    return NewEventsMsg.create(events);
+    const events = StateEvent.from(device)
+    return NewEventsMsg.create(events)
   }
 
   /**
-   * 
-   * @param {StateEvent} event 
+   *
+   * @param {StateEvent} event
    * @returns {Message}
    */
   static create(event) {
-      return new Message(0, MessageType.NewEvents, event.buffer);
+    return new Message(0, MessageType.NewEvents, event.buffer)
   }
 }
 
 export class RemoveDeviceMsg {
   /**
-   * 
-   * @param {InputDevice} device 
+   *
+   * @param {InputDevice} device
    * @returns {Message}
    */
-   static create(device) {
-    let buffer = new ArrayBuffer(MemoryHelper.sizeOfInt);
-    let view = new DataView(buffer);
-    view.setInt32(device.deviceId);
-    return new Message(0, MessageType.RemoveDevice, buffer);
+  static create(device) {
+    const buffer = new ArrayBuffer(MemoryHelper.sizeOfInt)
+    const view = new DataView(buffer)
+    view.setInt32(device.deviceId)
+    return new Message(0, MessageType.RemoveDevice, buffer)
   }
 }
 
 export class ChangeUsageMsg {
-
   static create(device) {
     // todo:
-    throw new Error(`ChangeUsageMsg class is not implemented. device=${device}`);
+    throw new Error(`ChangeUsageMsg class is not implemented. device=${device}`)
   }
 }
