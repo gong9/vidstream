@@ -102,13 +102,11 @@ export class Signaling extends EventTarget {
 
   async sendOffer(connectionId, sdp) {
     const data = { sdp, connectionId }
-    Logger.log(`sendOffer:${data}`)
     await fetch(this.url('offer'), { method: 'POST', headers: this.headers(), body: JSON.stringify(data) })
   }
 
   async sendAnswer(connectionId, sdp) {
     const data = { sdp, connectionId }
-    Logger.log(`sendAnswer:${data}`)
     await fetch(this.url('answer'), { method: 'POST', headers: this.headers(), body: JSON.stringify(data) })
   }
 
@@ -119,7 +117,6 @@ export class Signaling extends EventTarget {
       sdpMid,
       connectionId,
     }
-    Logger.log(`sendCandidate:${data}`)
     await fetch(this.url('candidate'), { method: 'POST', headers: this.headers(), body: JSON.stringify(data) })
   }
 
@@ -193,27 +190,23 @@ export class WebSocketSignaling extends EventTarget {
 
   createConnection(connectionId) {
     const sendJson = JSON.stringify({ type: 'connect', connectionId })
-    Logger.log(sendJson)
     this.websocket.send(sendJson)
   }
 
   deleteConnection(connectionId) {
     const sendJson = JSON.stringify({ type: 'disconnect', connectionId })
-    Logger.log(sendJson)
     this.websocket.send(sendJson)
   }
 
   sendOffer(connectionId, sdp) {
     const data = { sdp, connectionId }
     const sendJson = JSON.stringify({ type: 'offer', from: connectionId, data })
-    Logger.log(sendJson)
     this.websocket.send(sendJson)
   }
 
   sendAnswer(connectionId, sdp) {
     const data = { sdp, connectionId }
     const sendJson = JSON.stringify({ type: 'answer', from: connectionId, data })
-    Logger.log(sendJson)
     this.websocket.send(sendJson)
   }
 
@@ -225,7 +218,6 @@ export class WebSocketSignaling extends EventTarget {
       connectionId,
     }
     const sendJson = JSON.stringify({ type: 'candidate', from: connectionId, data })
-    Logger.log(sendJson)
     this.websocket.send(sendJson)
   }
 }

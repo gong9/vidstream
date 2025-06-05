@@ -37,6 +37,7 @@ export class RenderStreaming {
 
     this._config = config
     this._signaling = signaling
+
     this._signaling.addEventListener('connect', this._onConnect.bind(this))
     this._signaling.addEventListener('disconnect', this._onDisconnect.bind(this))
     this._signaling.addEventListener('offer', this._onOffer.bind(this))
@@ -80,12 +81,13 @@ export class RenderStreaming {
   async _onAnswer(e) {
     const answer = e.detail
     const desc = new RTCSessionDescription({ sdp: answer.sdp, type: 'answer' })
+
     if (this._peer) {
       try {
         await this._peer.onGotDescription(answer.connectionId, desc)
       }
       catch (error) {
-        Logger.warn(`Error happen on GotDescription that description.\n Message: ${error}\n RTCSdpType:${desc.type}\n sdp:${desc.sdp}`)
+        console.warn(`Error happen on GotDescription that description.\n Message: ${error}\n RTCSdpType:${desc.type}\n sdp:${desc.sdp}`)
       }
     }
   }
@@ -112,7 +114,6 @@ export class RenderStreaming {
 
   _preparePeerConnection(connectionId, polite) {
     if (this._peer) {
-      Logger.log('Close current PeerConnection')
       this._peer.close()
       this._peer = null
     }
@@ -161,7 +162,7 @@ export class RenderStreaming {
 
     this._peer.addEventListener('connectionfailed', (e) => {
       const data = e.detail
-      Logger.warn(`Connection failed after max retries: ${data.reason}`)
+      console.error(`Connection failed after max retries: ${data.reason}, 请检查unity 程序是否正常运行`)
       this.onDisconnect(`Connection failed after max retries. connectionId:${data.connectionId}`)
     })
 

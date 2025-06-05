@@ -1,19 +1,14 @@
 import { getRTCConfiguration } from '../core/config.js'
-import { createDisplayStringArray } from '../core/stats.js'
+import { createDisplayStatsArray } from '../core/stats.js'
 import { VideoPlayer } from '../core/videoplayer.js'
 import { RenderStreaming } from '../core/renderstreaming.js'
 import { Signaling, WebSocketSignaling } from '../core/signaling.js'
+import { emitter } from '../core/utils.js'
 
-/** @type {RenderStreaming} */
 let renderstreaming
-/** @type {boolean} */
 const useWebSocket = true
 
 export function start(renderRoot) {
-  const supportsSetCodecPreferences
-    = window.RTCRtpTransceiver
-    && 'setCodecPreferences' in window.RTCRtpTransceiver.prototype
-
   const playerDiv = renderRoot.querySelector('#player')
   const messageDiv = renderRoot.querySelector('#message')
   messageDiv.style.display = 'none'
@@ -23,7 +18,7 @@ export function start(renderRoot) {
   setup()
 
   window.document.oncontextmenu = function () {
-    return false // cancel default menu
+    return false
   }
 
   window.addEventListener(
@@ -45,8 +40,6 @@ export function start(renderRoot) {
   )
 
   async function setup() {
-    showCodecSelect()
-
     videoPlayer.createPlayer(playerDiv)
     setupRenderStreaming()
   }
@@ -94,20 +87,7 @@ export function start(renderRoot) {
       transceivers.forEach(t => t.setCodecPreferences(selectedCodecs))
   }
 
-  function showCodecSelect() {
-    if (!supportsSetCodecPreferences) {
-      messageDiv.style.display = 'block'
-      messageDiv.innerHTML = 'Current Browser does not support <a href="https://developer.mozilla.org/en-US/docs/Web/API/RTCRtpTransceiver/setCodecPreferences">RTCRtpTransceiver.setCodecPreferences</a>.'
-      return
-    }
-
-    const codecs = RTCRtpSender.getCapabilities('video').codecs
-    console.log(codecs)
-  }
-
-  /** @type {RTCStatsReport} */
   let lastStats
-  /** @type {number} */
   let intervalId
 
   function showStatsMessage() {
@@ -116,14 +96,13 @@ export function start(renderRoot) {
         return
 
       const stats = await renderstreaming.getStats()
+
       if (stats == null)
         return
 
-      const array = createDisplayStringArray(stats, lastStats)
-      if (array.length) {
-        messageDiv.style.display = 'block'
-        messageDiv.innerHTML = array.join('<br>')
-      }
+      const data = createDisplayStatsArray(stats, lastStats)
+      emitter.emit('stream-stats', data)
+
       lastStats = stats
     }, 1000)
   }
@@ -134,7 +113,5 @@ export function start(renderRoot) {
 
     lastStats = null
     intervalId = null
-    messageDiv.style.display = 'none'
-    messageDiv.innerHTML = ''
   }
 }

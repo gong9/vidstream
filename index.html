@@ -22,3 +22,21 @@
 </body>
 
 </html>
+
+<script>
+  customElements.whenDefined('streaming-video').then(() => {
+    const video = document.querySelector('streaming-video')
+
+    video.addEventListener('stream-connected', (e) => {
+      // console.log(e, '加载完成')
+    })
+
+    video.addEventListener('stream-log', (e) => {
+      console.log(e, 'stream-log')
+    })
+
+    video.addEventListener('stream-stats', (e) => {
+      // console.log(e, 'stream-stats')
+    })
+  })
+</script>

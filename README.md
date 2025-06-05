@@ -15,3 +15,22 @@ npm install streaming-video
 ```
 
 
+## Events
+
+- `stream-progress` 流进度
+- `stream-connected` 流连接成功
+- `stream-stats` 流统计信息
+- `stream-disconnected` 流断开连接
+- `stream-ended` 流结束
+- `stream-log` 流日志
+
+
+## Methods
+
+- `connect` 进行流连接
+- `disconnect` 断开流连接
+
+
+
+
+

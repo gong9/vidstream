@@ -12,7 +12,8 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "lit": "^3.2.1"
+    "lit": "^3.2.1",
+    "mitt": "^3.0.1"
   },
   "files": [
     "dist",

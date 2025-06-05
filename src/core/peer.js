@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
 /* eslint-disable no-void */
-import * as Logger from './logger.js'
 
 export default class Peer extends EventTarget {
   constructor(connectionId, polite, config, resendIntervalMsec = 5000) {
@@ -14,14 +13,17 @@ export default class Peer extends EventTarget {
     this.waitingAnswer = false
     this.ignoreOffer = false
     this.srdAnswerPending = false
-    this.log = str => void Logger.log(`[${_this.polite ? 'POLITE' : 'IMPOLITE'}] ${str}`)
-    this.warn = str => void Logger.warn(`[${_this.polite ? 'POLITE' : 'IMPOLITE'}] ${str}`)
+
+    this.log = str => void console.log(`[${_this.polite ? 'POLITE' : 'IMPOLITE'}] ${str}`)
+    this.warn = str => void console.warn(`[${_this.polite ? 'POLITE' : 'IMPOLITE'}] ${str}`)
+
     this.assert_equals = window.assert_equals
       ? window.assert_equals
       : (a, b, msg) => {
           if (a === b)
             return; throw new Error(`${msg} expected ${b} but got ${a}`)
         }
+
     this.interval = resendIntervalMsec
     this.sleep = msec => new Promise(resolve => setTimeout(resolve, msec))
     this.offerRetryCount = 0
@@ -99,6 +101,7 @@ export default class Peer extends EventTarget {
         else {
           this.log('Max offer retries reached, stopping offer resend')
           this.waitingAnswer = false
+
           this.dispatchEvent(new CustomEvent('connectionfailed', {
             detail: {
               connectionId: this.connectionId,
@@ -160,11 +163,11 @@ export default class Peer extends EventTarget {
       return
 
     const _this = this
+
     const isStable
-      = this.pc.signalingState === 'stable'
-      || (this.pc.signalingState === 'have-local-offer' && this.srdAnswerPending)
-    this.ignoreOffer
-      = description.type === 'offer' && !this.polite && (this.makingOffer || !isStable)
+      = this.pc.signalingState === 'stable' || (this.pc.signalingState === 'have-local-offer' && this.srdAnswerPending)
+
+    this.ignoreOffer = description.type === 'offer' && !this.polite && (this.makingOffer || !isStable)
 
     if (this.ignoreOffer) {
       _this.log('glare - ignoring offer')
@@ -174,6 +177,7 @@ export default class Peer extends EventTarget {
     this.waitingAnswer = false
     this.srdAnswerPending = description.type === 'answer'
     _this.log(`SRD(${description.type})`)
+
     await this.pc.setRemoteDescription(description)
     this.srdAnswerPending = false
 

@@ -1,5 +1,6 @@
 import { Observer, Sender } from './sender.js'
 import { InputRemoting } from './inputremoting.js'
+import { emitter } from './utils'
 
 export class VideoPlayer {
   constructor() {
@@ -29,6 +30,10 @@ export class VideoPlayer {
     this.videoElement.style.height = '100%'
 
     this.videoElement.addEventListener('loadedmetadata', this._onLoadedVideo.bind(this), true)
+    this.videoElement.addEventListener('loadeddata', () => {
+      emitter.emit('stream-connected')
+    })
+
     this.playerElement.appendChild(this.videoElement)
   }
 
