@@ -1,6 +1,6 @@
 {
   "name": "vidstream",
-  "version": "0.0.1",
+  "version": "0.0.1-alpha.1",
   "description": "Streaming video component",
   "main": "dist/streaming-video.umd.js",
   "module": "dist/streaming-video.es.js",
@@ -15,6 +15,12 @@
     "lit": "^3.2.1",
     "mitt": "^3.0.1"
   },
+  "keywords": [
+    "streaming",
+    "video",
+    "stream",
+    "streaming-video"
+  ],
   "files": [
     "dist",
     "package.json",
