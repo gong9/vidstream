@@ -1,6 +1,6 @@
 import { LitElement, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import { start } from './receiver/main'
+import { jsonChannel, start } from './receiver/main'
 import { styles } from './streaming-video.styles'
 import { emitter } from './core/utils'
 
@@ -15,14 +15,6 @@ export class StreamingVideo extends LitElement {
 
   constructor() {
     super()
-
-    emitter.on('stream-start', () => {
-      this.dispatchEvent(new CustomEvent('stream-connected', {
-        detail: { connected: false },
-        bubbles: true,
-        composed: true,
-      }))
-    })
 
     emitter.on('stream-connected', () => {
       this.dispatchEvent(new CustomEvent('stream-connected', {
@@ -55,6 +47,14 @@ export class StreamingVideo extends LitElement {
         composed: true,
       }))
     })
+
+    emitter.on('stream-message', (message) => {
+      this.dispatchEvent(new CustomEvent('stream-message', {
+        detail: { message },
+        bubbles: true,
+        composed: true,
+      }))
+    })
   }
 
   @property()
@@ -77,6 +77,11 @@ export class StreamingVideo extends LitElement {
 
   public disconnected() {
     console.log('test')
+  }
+
+  public send(message: string) {
+    if (jsonChannel.channel && jsonChannel.channel.readyState === 'open')
+      jsonChannel.channel.send(message)
   }
 
   public render() {

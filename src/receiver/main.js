@@ -6,6 +6,11 @@ import { Signaling, WebSocketSignaling } from '../core/signaling.js'
 import { emitter } from '../core/utils.js'
 
 let renderstreaming
+
+export const jsonChannel = {
+  channel: null,
+}
+
 const useWebSocket = true
 
 export function start(renderRoot) {
@@ -62,6 +67,14 @@ export function start(renderRoot) {
     const channel = renderstreaming.createDataChannel('input')
     videoPlayer.setupInput(channel)
     showStatsMessage()
+
+    jsonChannel.channel = renderstreaming.createDataChannel('jsonChannel')
+    jsonChannel.channel.onmessage = function (event) {
+      const decoder = new TextDecoder('utf-8')
+      const message = decoder.decode(event.data)
+
+      emitter.emit('stream-message', message)
+    }
   }
 
   async function onDisconnect(connectionId) {

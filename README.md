@@ -17,19 +17,20 @@ npm install vidstream
 
 ## Events
 
-- `stream-progress` 流进度
+- `stream-progress` 流进度 wip
 - `stream-connected` 流连接成功
 - `stream-stats` 流统计信息
 - `stream-disconnected` 流断开连接
-- `stream-ended` 流结束
-- `stream-log` 流日志
+- `stream-ended` 流结束 wip
+- `stream-log` 流日志 wip
 - `stream-message` 渲染端返回的消息
+
 
 
 ## Methods
 
-- `connect` 进行流连接
-- `disconnect` 断开流连接
+- `connect` 进行流连接 wip
+- `disconnect` 断开流连接 wip
 - `send` 发送消息
 
 
