@@ -15,7 +15,6 @@
   </style>
   <title>Streaming Video</title>
 </head>
-
 <body>
   <streaming-video host="localhost:80" width="100%" height="100%" />
   <script type="module" src="./src/streaming-video.ts"></script>
@@ -28,15 +27,11 @@
     const video = document.querySelector('streaming-video')
 
     video.addEventListener('stream-connected', (e) => {
-      // console.log(e, '加载完成')
-    })
-
-    video.addEventListener('stream-log', (e) => {
-      console.log(e, 'stream-log')
+      console.log(e, '加载完成')
     })
 
     video.addEventListener('stream-stats', (e) => {
-      // console.log(e, 'stream-stats')
+      console.log(e, 'stream-stats')
     })
   })
 </script>
