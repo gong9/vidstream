@@ -68,6 +68,9 @@ export class Signaling extends EventTarget {
           case 'candidate':
             this.dispatchEvent(new CustomEvent('candidate', { detail: msg }))
             break
+          case 'error':
+            this.dispatchEvent(new CustomEvent('error', { detail: msg }))
+            break
           default:
             break
         }
@@ -170,6 +173,9 @@ export class WebSocketSignaling extends EventTarget {
           break
         case 'candidate':
           this.dispatchEvent(new CustomEvent('candidate', { detail: { connectionId: msg.from, candidate: msg.data.candidate, sdpMLineIndex: msg.data.sdpMLineIndex, sdpMid: msg.data.sdpMid } }))
+          break
+        case 'error':
+          this.dispatchEvent(new CustomEvent('error', { detail: msg }))
           break
         default:
           break

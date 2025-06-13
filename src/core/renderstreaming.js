@@ -43,6 +43,7 @@ export class RenderStreaming {
     this._signaling.addEventListener('offer', this._onOffer.bind(this))
     this._signaling.addEventListener('answer', this._onAnswer.bind(this))
     this._signaling.addEventListener('candidate', this._onIceCandidate.bind(this))
+    this._signaling.addEventListener('error', this._onError.bind(this))
   }
 
   async _onConnect(e) {
@@ -70,6 +71,7 @@ export class RenderStreaming {
       this._preparePeerConnection(offer.connectionId, offer.polite)
 
     const desc = new RTCSessionDescription({ sdp: offer.sdp, type: 'offer' })
+
     try {
       await this._peer.onGotDescription(offer.connectionId, desc)
     }
@@ -97,6 +99,13 @@ export class RenderStreaming {
     const iceCandidate = new RTCIceCandidate({ candidate: candidate.candidate, sdpMid: candidate.sdpMid, sdpMLineIndex: candidate.sdpMLineIndex })
     if (this._peer)
       await this._peer.onGotCandidate(candidate.connectionId, iceCandidate)
+  }
+
+  async _onError(e) {
+    const error = e.detail
+
+    this.onDisconnect(error.connectionId)
+    console.error('error', error)
   }
 
   /**

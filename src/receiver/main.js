@@ -77,11 +77,8 @@ export function start(renderRoot) {
     }
   }
 
-  async function onDisconnect(connectionId) {
+  async function onDisconnect() {
     clearStatsMessage()
-    messageDiv.style.display = 'block'
-    messageDiv.innerText = `Disconnect peer on ${connectionId}.`
-
     await renderstreaming.stop()
     renderstreaming = null
     videoPlayer.deletePlayer()
