@@ -125,7 +125,7 @@ export class RenderStreaming {
     this._connectionId = connectionId || uuid4()
     this._preparePeerConnection(this._connectionId, true)
     this.onConnect(this._connectionId)
-    //await this._signaling.createConnection(this._connectionId)
+    // await this._signaling.createConnection(this._connectionId)
   }
 
   async deleteConnection() {
