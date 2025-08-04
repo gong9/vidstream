@@ -58,9 +58,14 @@ export function start(renderRoot) {
     renderstreaming.onDisconnect = onDisconnect
     renderstreaming.onTrackEvent = data => videoPlayer.addTrack(data.track)
     renderstreaming.onGotOffer = setCodecPreferences
+    renderstreaming.onRunning = onRunning
 
     await renderstreaming.start()
-    await renderstreaming.createConnection()
+  }
+
+  async function onRunning(connectionId) {
+    console.log(`On running event peer with data:${connectionId}`)
+    await renderstreaming.createConnection(connectionId);
   }
 
   function onConnect() {

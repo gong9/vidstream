@@ -104,6 +104,7 @@ export class Signaling extends EventTarget {
   }
 
   async sendOffer(connectionId, sdp) {
+    console.log('sendOffer', connectionId, sdp)
     const data = { sdp, connectionId }
     await fetch(this.url('offer'), { method: 'POST', headers: this.headers(), body: JSON.stringify(data) })
   }
@@ -159,6 +160,9 @@ export class WebSocketSignaling extends EventTarget {
       Logger.log(msg)
 
       switch (msg.type) {
+        case 'running':
+          this.dispatchEvent(new CustomEvent('running', { detail: { connectionId: msg.connectionId } }))
+          break
         case 'connect':
           this.dispatchEvent(new CustomEvent('connect', { detail: msg }))
           break

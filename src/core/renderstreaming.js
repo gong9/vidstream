@@ -16,6 +16,9 @@ export class RenderStreaming {
   constructor(signaling, config) {
     this._peer = null
     this._connectionId = null
+    this.onRunning = function (connectionId) {
+      console.log(`On running event peer with data:${connectionId}`)
+    }
     this.onConnect = function (connectionId) {
       console.log(`Connect peer on ${connectionId}.`)
     }
@@ -38,12 +41,18 @@ export class RenderStreaming {
     this._config = config
     this._signaling = signaling
 
+    this._signaling.addEventListener('running', this._onRunning.bind(this))
     this._signaling.addEventListener('connect', this._onConnect.bind(this))
     this._signaling.addEventListener('disconnect', this._onDisconnect.bind(this))
     this._signaling.addEventListener('offer', this._onOffer.bind(this))
     this._signaling.addEventListener('answer', this._onAnswer.bind(this))
     this._signaling.addEventListener('candidate', this._onIceCandidate.bind(this))
     this._signaling.addEventListener('error', this._onError.bind(this))
+  }
+
+  async _onRunning(e) {
+    const data = e.detail
+    this.onRunning(data.connectionId)
   }
 
   async _onConnect(e) {
@@ -114,7 +123,9 @@ export class RenderStreaming {
    */
   async createConnection(connectionId) {
     this._connectionId = connectionId || uuid4()
-    await this._signaling.createConnection(this._connectionId)
+    this._preparePeerConnection(this._connectionId, true)
+    this.onConnect(this._connectionId)
+    //await this._signaling.createConnection(this._connectionId)
   }
 
   async deleteConnection() {
@@ -123,10 +134,12 @@ export class RenderStreaming {
 
   _preparePeerConnection(connectionId, polite) {
     if (this._peer) {
+      console.log('close peer')
       this._peer.close()
       this._peer = null
     }
 
+    console.log('create peer')
     // Create peerConnection with proxy server and set up handlers
     this._peer = new Peer(connectionId, polite, this._config)
 
