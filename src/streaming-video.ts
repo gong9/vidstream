@@ -80,8 +80,12 @@ export class StreamingVideo extends LitElement {
   }
 
   public send(message: string) {
-    if (jsonChannel.channel && jsonChannel.channel.readyState === 'open')
-      jsonChannel.channel.send(message)
+    if (jsonChannel.channel && jsonChannel.channel.readyState === 'open') {
+      if (typeof message === 'string')
+        jsonChannel.channel.send(message)
+      else
+        jsonChannel.channel.send(JSON.stringify(message))
+    }
   }
 
   public render() {

@@ -65,7 +65,7 @@ export function start(renderRoot) {
 
   async function onRunning(connectionId) {
     console.log(`On running event peer with data:${connectionId}`)
-    await renderstreaming.createConnection(connectionId);
+    await renderstreaming.createConnection(connectionId)
   }
 
   function onConnect() {
